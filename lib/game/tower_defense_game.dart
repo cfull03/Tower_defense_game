@@ -17,14 +17,18 @@ class TowerDefenseGame extends FlameGame
 
   @override
   Future<void> onLoad() async {
-    map = await TiledComponent.load('level1.tmx', Vector2.all(32));
-    add(map);
+    await _loadMap();
     enemyPath = _loadEnemyPath(map);
     _spawnBasicNPC();
     _spawnFastNPC();
     _spawnTankNPC();
     _addInitialTowers();
     return super.onLoad();
+  }
+
+  Future<void> _loadMap() async {
+    map = await TiledComponent.load('level1.tmx', Vector2.all(32));
+    add(map);
   }
 
   @override
@@ -88,15 +92,21 @@ class TowerDefenseGame extends FlameGame
   }
 
   void _addInitialTowers() {
-    final towerPositions = [
-      Vector2(100, 200),
-      Vector2(300, 400),
-    ];
+    final towerPositions = _loadTowerSpots(map);
     for (var pos in towerPositions) {
       final tower = BasicTower(position: pos);
       add(tower);
       towers.add(tower);
     }
+  }
+
+  List<Vector2> _loadTowerSpots(TiledComponent map) {
+    final spotsLayer = map.tileMap.getLayer<ObjectGroup>('tower_spots');
+    final spotsPoints = <Vector2>[];
+    for (final obj in spotsLayer!.objects) {
+      spotsPoints.add(Vector2(obj.x, obj.y));
+    }
+    return spotsPoints;
   }
 
   void addTower(Vector2 position) {
