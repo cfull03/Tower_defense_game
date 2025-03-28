@@ -13,27 +13,23 @@ class TowerDefenseGame extends FlameGame
   late List<Vector2> enemyPath;
   final List<BasicNPC> npcs = [];
   final List<BasicTower> towers = [];
-  double baseHealth = 100.0; 
+  double baseHealth = 100.0;
 
   @override
   Future<void> onLoad() async {
     map = await TiledComponent.load('level1.tmx', Vector2.all(32));
     add(map);
-
     enemyPath = _loadEnemyPath(map);
-
     _spawnBasicNPC();
     _spawnFastNPC();
     _spawnTankNPC();
     _addInitialTowers();
-
     return super.onLoad();
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-
     for (var npc in List.from(npcs)) {
       npc.followPath(dt);
       if (npc.currentPointIndex >= enemyPath.length) {
@@ -42,23 +38,18 @@ class TowerDefenseGame extends FlameGame
         npcs.remove(npc);
       }
     }
-
-  
     for (var tower in towers) {
       tower.checkAndShoot(npcs);
     }
-
     if (baseHealth <= 0) {
       print('Game Over! Base destroyed.');
-      pauseEngine(); 
+      pauseEngine();
     }
   }
-
 
   List<Vector2> _loadEnemyPath(TiledComponent map) {
     final pathLayer = map.tileMap.getLayer<ObjectGroup>('path');
     final pathPoints = <Vector2>[];
-
     for (final obj in pathLayer!.objects) {
       pathPoints.add(Vector2(obj.x, obj.y));
     }
@@ -69,7 +60,7 @@ class TowerDefenseGame extends FlameGame
     final npc = BasicNPC(
       path: enemyPath,
       position: enemyPath.first,
-      baseDamage: 10.0, 
+      baseDamage: 10.0,
     );
     add(npc);
     npcs.add(npc);
@@ -89,7 +80,8 @@ class TowerDefenseGame extends FlameGame
     final npc = TankNPC(
       path: enemyPath,
       position: enemyPath.first,
-      baseDamage: 20.0, 
+      baseDamage: 20.0,
+      health: 200.0,
     );
     add(npc);
     npcs.add(npc);
@@ -124,8 +116,9 @@ class TowerDefenseGame extends FlameGame
     npcs.clear();
     towers.clear();
     baseHealth = 100.0;
-
     _spawnBasicNPC();
+    _spawnFastNPC();
+    _spawnTankNPC();
     _addInitialTowers();
     resumeEngine();
     print('Game restarted!');
