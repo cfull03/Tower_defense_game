@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'screens/game_screen.dart';
 import 'screens/main_menu.dart';
 
 void main() {

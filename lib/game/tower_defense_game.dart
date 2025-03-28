@@ -2,14 +2,16 @@ import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/tiled.dart';
-import 'enemies/basic_enemy.dart';
+import 'npcs/basic_npc.dart';
 import 'towers/basic_tower.dart';
 
-class TowerDefenseGame extends FlameGame with HasDraggableComponents, HasCollisionDetection {
+class TowerDefenseGame extends FlameGame
+    with HasDraggableComponents, HasCollisionDetection {
   late TiledComponent map;
   late List<Vector2> enemyPath;
-  final List<BasicEnemy> enemies = [];
+  final List<BasicNPC> npcs = []; // Updated to use NPCs
   final List<BasicTower> towers = [];
+  double baseHealth = 100.0; // Added base health
 
   @override
   Future<void> onLoad() async {
@@ -20,8 +22,8 @@ class TowerDefenseGame extends FlameGame with HasDraggableComponents, HasCollisi
     // Parse enemy path from Tiled map
     enemyPath = _loadEnemyPath(map);
 
-    // Add initial enemies and towers
-    _spawnEnemy();
+    // Add initial NPCs and towers
+    _spawnNPC();
     _addInitialTowers();
 
     return super.onLoad();
@@ -31,25 +33,29 @@ class TowerDefenseGame extends FlameGame with HasDraggableComponents, HasCollisi
   void update(double dt) {
     super.update(dt);
 
-    // Update game logic
-    for (var enemy in enemies) {
-      enemy.followPath(enemyPath, dt);
-      if (enemy.isDead) {
-        enemies.remove(enemy);
+    // Update NPCs and check if they reached the base
+    for (var npc in List.from(npcs)) {
+      npc.followPath(dt);
+      if (npc.currentPointIndex >= enemyPath.length) {
+        _damageBase(npc.baseDamage);
+        npc.removeFromParent();
+        npcs.remove(npc);
       }
     }
 
+    // Towers check and shoot at NPCs
     for (var tower in towers) {
-      tower.checkAndShoot(enemies);
+      tower.checkAndShoot(npcs);
+    }
+
+    // Check for game over
+    if (baseHealth <= 0) {
+      print('Game Over! Base destroyed.');
+      pauseEngine(); // Stop the game if the base is destroyed
     }
   }
 
-  @override
-  void render(Canvas canvas) {
-    super.render(canvas);
-    // Optional: Draw debug info or HUD
-  }
-
+  /// Load enemy path from the Tiled map
   List<Vector2> _loadEnemyPath(TiledComponent map) {
     final pathLayer = map.tileMap.getLayer<ObjectGroup>('path');
     final pathPoints = <Vector2>[];
@@ -60,12 +66,18 @@ class TowerDefenseGame extends FlameGame with HasDraggableComponents, HasCollisi
     return pathPoints;
   }
 
-  void _spawnEnemy() {
-    final enemy = BasicEnemy(position: enemyPath.first);
-    add(enemy);
-    enemies.add(enemy);
+  /// Spawn a Basic NPC at the start of the path
+  void _spawnNPC() {
+    final npc = BasicNPC(
+      path: enemyPath,
+      position: enemyPath.first,
+      baseDamage: 10.0, // Base damage when reaching the end
+    );
+    add(npc);
+    npcs.add(npc);
   }
 
+  /// Add initial towers at predefined positions
   void _addInitialTowers() {
     final towerPositions = [
       Vector2(100, 200),
@@ -78,9 +90,9 @@ class TowerDefenseGame extends FlameGame with HasDraggableComponents, HasCollisi
     }
   }
 
-  void addTower(Vector2 position) {
-    final tower = BasicTower(position: position);
-    add(tower);
-    towers.add(tower);
+  /// Reduce base health when NPC reaches the target
+  void _damageBase(double damage) {
+    baseHealth -= damage;
+    print('Base took $damage damage! Health remaining: $baseHealth');
   }
 }
