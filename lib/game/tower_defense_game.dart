@@ -3,27 +3,28 @@ import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flame/tiled.dart';
 import 'npcs/basic_npc.dart';
+import 'npcs/fast_npc.dart';
+import 'npcs/tank_npc.dart';
 import 'towers/basic_tower.dart';
 
 class TowerDefenseGame extends FlameGame
     with HasDraggableComponents, HasCollisionDetection {
   late TiledComponent map;
   late List<Vector2> enemyPath;
-  final List<BasicNPC> npcs = []; // Updated to use NPCs
+  final List<BasicNPC> npcs = [];
   final List<BasicTower> towers = [];
-  double baseHealth = 100.0; // Added base health
+  double baseHealth = 100.0; 
 
   @override
   Future<void> onLoad() async {
-    // Load the map
     map = await TiledComponent.load('level1.tmx', Vector2.all(32));
     add(map);
 
-    // Parse enemy path from Tiled map
     enemyPath = _loadEnemyPath(map);
 
-    // Add initial NPCs and towers
-    _spawnNPC();
+    _spawnBasicNPC();
+    _spawnFastNPC();
+    _spawnTankNPC();
     _addInitialTowers();
 
     return super.onLoad();
@@ -33,7 +34,6 @@ class TowerDefenseGame extends FlameGame
   void update(double dt) {
     super.update(dt);
 
-    // Update NPCs and check if they reached the base
     for (var npc in List.from(npcs)) {
       npc.followPath(dt);
       if (npc.currentPointIndex >= enemyPath.length) {
@@ -43,19 +43,18 @@ class TowerDefenseGame extends FlameGame
       }
     }
 
-    // Towers check and shoot at NPCs
+  
     for (var tower in towers) {
       tower.checkAndShoot(npcs);
     }
 
-    // Check for game over
     if (baseHealth <= 0) {
       print('Game Over! Base destroyed.');
-      pauseEngine(); // Stop the game if the base is destroyed
+      pauseEngine(); 
     }
   }
 
-  /// Load enemy path from the Tiled map
+
   List<Vector2> _loadEnemyPath(TiledComponent map) {
     final pathLayer = map.tileMap.getLayer<ObjectGroup>('path');
     final pathPoints = <Vector2>[];
@@ -66,18 +65,36 @@ class TowerDefenseGame extends FlameGame
     return pathPoints;
   }
 
-  /// Spawn a Basic NPC at the start of the path
-  void _spawnNPC() {
+  void _spawnBasicNPC() {
     final npc = BasicNPC(
       path: enemyPath,
       position: enemyPath.first,
-      baseDamage: 10.0, // Base damage when reaching the end
+      baseDamage: 10.0, 
     );
     add(npc);
     npcs.add(npc);
   }
 
-  /// Add initial towers at predefined positions
+  void _spawnFastNPC() {
+    final npc = FastNPC(
+      path: enemyPath,
+      position: enemyPath.first,
+      baseDamage: 5.0,
+    );
+    add(npc);
+    npcs.add(npc);
+  }
+
+  void _spawnTankNPC() {
+    final npc = TankNPC(
+      path: enemyPath,
+      position: enemyPath.first,
+      baseDamage: 20.0, 
+    );
+    add(npc);
+    npcs.add(npc);
+  }
+
   void _addInitialTowers() {
     final towerPositions = [
       Vector2(100, 200),
@@ -90,9 +107,27 @@ class TowerDefenseGame extends FlameGame
     }
   }
 
-  /// Reduce base health when NPC reaches the target
+  void addTower(Vector2 position) {
+    final tower = BasicTower(position: position);
+    add(tower);
+    towers.add(tower);
+  }
+
   void _damageBase(double damage) {
     baseHealth -= damage;
     print('Base took $damage damage! Health remaining: $baseHealth');
+  }
+
+  void restartGame() {
+    removeAll(npcs);
+    removeAll(towers);
+    npcs.clear();
+    towers.clear();
+    baseHealth = 100.0;
+
+    _spawnBasicNPC();
+    _addInitialTowers();
+    resumeEngine();
+    print('Game restarted!');
   }
 }
