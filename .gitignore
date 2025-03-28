@@ -1,0 +1,76 @@
+# General
+.DS_Store
+.vscode/
+.idea/
+*.iml
+
+# Flutter and Dart
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+pubspec.lock
+
+# Build outputs
+build/
+android/app/build/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Pods/
+macos/Flutter/ephemeral/
+macos/Pods/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Gradle
+android/.gradle/
+android/app/.cxx/
+android/local.properties
+
+# Xcode
+ios/Runner.xcworkspace/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/.idea/
+ios/.generated/
+
+# CocoaPods
+ios/Pods/
+Podfile.lock
+ios/Podfile.lock
+
+# Android Studio
+android/.idea/
+*.iml
+*.hprof
+local.properties
+
+# Windows specific
+windows/flutter/ephemeral/.plugin_symlinks/
+windows/.idea/
+
+# Linux specific
+linux/flutter/ephemeral/.plugin_symlinks/
+linux/.idea/
+
+# macOS specific
+macos/Flutter/ephemeral/.plugin_symlinks/
+macos/.idea/
+
+# Web specific
+web/.idea/
+
+# Others
+*.log
+*.lock
+*.tmp
+*.swp
