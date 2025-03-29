@@ -8,12 +8,12 @@ class TankNPC extends NPCBase {
   double health;
 
   TankNPC({
-    required List<Vector2> path,
+    required super.path,
     this.baseDamage = 20.0,
     this.health = 200.0,
-    Vector2? position,
-    Sprite? sprite,
-  }) : super(path: path, speed: 25.0, position: position, sprite: sprite);
+    super.position,
+    super.sprite,
+  }) : super(speed: 25.0);
 
   @override
   void performAction() {

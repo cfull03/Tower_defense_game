@@ -6,13 +6,14 @@ import 'npcs/basic_npc.dart';
 import 'npcs/fast_npc.dart';
 import 'npcs/tank_npc.dart';
 import 'towers/basic_tower.dart';
+import 'towers/tower_base.dart';
 
 class TowerDefenseGame extends FlameGame
     with HasDraggableComponents, HasCollisionDetection {
   late TiledComponent map;
   late List<Vector2> enemyPath;
   final List<BasicNPC> npcs = [];
-  final List<BasicTower> towers = [];
+  final List<TowerBase> towers = [];
   double baseHealth = 100.0;
 
   @override
@@ -34,6 +35,7 @@ class TowerDefenseGame extends FlameGame
   @override
   void update(double dt) {
     super.update(dt);
+
     for (var npc in List.from(npcs)) {
       npc.followPath(dt);
       if (npc.currentPointIndex >= enemyPath.length) {
@@ -42,9 +44,11 @@ class TowerDefenseGame extends FlameGame
         npcs.remove(npc);
       }
     }
+
     for (var tower in towers) {
       tower.checkAndShoot(npcs);
     }
+
     if (baseHealth <= 0) {
       print('Game Over! Base destroyed.');
       pauseEngine();
@@ -132,5 +136,25 @@ class TowerDefenseGame extends FlameGame
     _addInitialTowers();
     resumeEngine();
     print('Game restarted!');
+  }
+
+  void upgradeTower(TowerBase tower) {
+    if (tower.upgradeLevel < 4) {
+      tower.upgrade();
+      print('Tower upgraded to level ${tower.upgradeLevel}');
+    } else {
+      _chooseTier4Upgrade(tower);
+    }
+  }
+
+  void _chooseTier4Upgrade(TowerBase tower) {
+    print('Choose a Tier 4 upgrade for this tower:');
+    print('1. Double Shot');
+    print('2. Explosive Rounds');
+    print('3. Freeze Effect');
+    // Simulate choice (this could be linked to UI interaction)
+    int choice = 1; // Example choice, change as needed
+    tower.applyTier4Choice(choice);
+    print('Tier 4 upgrade applied!');
   }
 }
