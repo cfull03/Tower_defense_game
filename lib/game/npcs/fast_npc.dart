@@ -7,11 +7,11 @@ class FastNPC extends NPCBase {
   bool reachedBase = false;
 
   FastNPC({
-    required List<Vector2> path,
+    required super.path,
     this.baseDamage = 5.0, 
-    Vector2? position,
-    Sprite? sprite,
-  }) : super(path: path, speed: 100.0, position: position, sprite: sprite);
+    super.position,
+    super.sprite,
+  }) : super(speed: 100.0);
 
   @override
   void performAction() {
