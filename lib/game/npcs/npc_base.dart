@@ -1,43 +1,44 @@
 import 'package:flame/components.dart';
-import 'package:flame/game.dart';
 
-/// Abstract base class for all NPCs that follow a path
-abstract class NPCBase extends SpriteComponent with HasGameRef<FlameGame> {
-  List<Vector2> path; // List of points to follow
-  double speed; // Movement speed of the NPC
-  int currentPointIndex = 0; // Current position in the path
+abstract class NPCBase extends PositionComponent {
+  double health;
+  double speed;
+  double baseDamage;
+  int currentPointIndex = 0;
+  List<Vector2> path;
 
   NPCBase({
+    required this.health,
+    required this.speed,
+    required this.baseDamage,
     required this.path,
-    this.speed = 50.0, // Default movement speed
-    Vector2? position,
-    Sprite? sprite,
-  }) : super(position: position, sprite: sprite);
-
-  /// Moves the NPC along the path defined in the Tiled map
-  void followPath(double dt) {
-    if (currentPointIndex < path.length) {
-      final targetPoint = path[currentPointIndex];
-      final direction = (targetPoint - position).normalized();
-
-      // Move NPC toward the target point
-      position.add(direction * speed * dt);
-
-      // Check if the NPC has reached the target point
-      if (position.distanceTo(targetPoint) < 1.0) {
-        currentPointIndex++;
-      }
-    }
-  }
-
-  /// Abstract method to define custom NPC behavior
-  /// Subclasses must implement this method
-  void performAction();
+    required Vector2 position,
+  }) : super(position: position, size: Vector2.all(32.0), anchor: Anchor.center);
 
   @override
   void update(double dt) {
     super.update(dt);
     followPath(dt);
-    performAction(); // Allows subclasses to define their behavior
   }
+
+  void followPath(double dt) {
+    if (currentPointIndex < path.length) {
+      final targetPosition = path[currentPointIndex];
+      final direction = (targetPosition - position).normalized();
+      position += direction * speed * dt;
+
+      if (position.distanceTo(targetPosition) < 5.0) {
+        currentPointIndex++;
+      }
+    }
+  }
+
+  void takeDamage(double damage) {
+    health -= damage;
+    if (health <= 0) {
+      removeFromParent();
+    }
+  }
+
+  bool get isDead => health <= 0;
 }

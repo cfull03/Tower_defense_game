@@ -1,4 +1,3 @@
-import 'package:flame/components.dart';
 import '../tower_defense_game.dart';
 import 'npc_base.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import '../npcs/npc_base.dart';
+import 'package:tower_defense_game/game/npcs/npc_base.dart';
 
 abstract class ProjectileBase extends SpriteComponent with HasGameRef {
   NPCBase target;
