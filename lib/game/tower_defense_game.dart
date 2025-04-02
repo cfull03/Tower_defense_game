@@ -1,42 +1,48 @@
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/input.dart';
-import 'package:flame/tiled.dart';
+import 'package:flame_tiled/flame_tiled.dart';
 import 'npcs/basic_npc.dart';
 import 'npcs/fast_npc.dart';
 import 'npcs/tank_npc.dart';
+import 'npcs/npc_base.dart';
 import 'towers/basic_tower.dart';
 import 'towers/tower_base.dart';
 
-class TowerDefenseGame extends FlameGame
-    with HasDraggableComponents, HasCollisionDetection {
-  late TiledComponent map;
-  late List<Vector2> enemyPath;
-  final List<BasicNPC> npcs = [];
+class TowerDefenseGame extends FlameGame with HasCollisionDetection {
+  TiledComponent? map;
+  List<Vector2> enemyPath = [];
+  final List<NPCBase> npcs = [];
   final List<TowerBase> towers = [];
   double baseHealth = 100.0;
 
   @override
   Future<void> onLoad() async {
     await _loadMap();
-    enemyPath = _loadEnemyPath(map);
-    _spawnBasicNPC();
-    _spawnFastNPC();
-    _spawnTankNPC();
+    if (map?.tileMap.getLayer<ObjectGroup>('path') == null) {
+      print('❌ Path layer missing in TMX file');
+      return;
+    }
+    enemyPath = _loadEnemyPath();
+    _spawnAllNPCs();
     _addInitialTowers();
-    return super.onLoad();
+    await super.onLoad();
   }
 
   Future<void> _loadMap() async {
-    map = await TiledComponent.load('level1.tmx', Vector2.all(32));
-    add(map);
+    try {
+      final loadedMap = await TiledComponent.load('maps/level1.tmx', Vector2.all(32));
+      map = loadedMap;
+      add(map!);
+      print('✅ Map loaded successfully');
+    } catch (e) {
+      print('❌ Failed to load map: $e');
+    }
   }
 
   @override
   void update(double dt) {
     super.update(dt);
-
-    for (var npc in List.from(npcs)) {
+    for (final npc in List<NPCBase>.from(npcs)) {
       npc.followPath(dt);
       if (npc.currentPointIndex >= enemyPath.length) {
         _damageBase(npc.baseDamage);
@@ -44,24 +50,28 @@ class TowerDefenseGame extends FlameGame
         npcs.remove(npc);
       }
     }
-
-    for (var tower in towers) {
+    for (final tower in towers) {
       tower.checkAndShoot(npcs);
     }
-
     if (baseHealth <= 0) {
       print('Game Over! Base destroyed.');
       pauseEngine();
     }
   }
 
-  List<Vector2> _loadEnemyPath(TiledComponent map) {
-    final pathLayer = map.tileMap.getLayer<ObjectGroup>('path');
+  List<Vector2> _loadEnemyPath() {
+    final pathLayer = map?.tileMap.getLayer<ObjectGroup>('path');
     final pathPoints = <Vector2>[];
-    for (final obj in pathLayer!.objects) {
+    for (final obj in pathLayer?.objects ?? []) {
       pathPoints.add(Vector2(obj.x, obj.y));
     }
     return pathPoints;
+  }
+
+  void _spawnAllNPCs() {
+    _spawnBasicNPC();
+    _spawnFastNPC();
+    _spawnTankNPC();
   }
 
   void _spawnBasicNPC() {
@@ -96,18 +106,18 @@ class TowerDefenseGame extends FlameGame
   }
 
   void _addInitialTowers() {
-    final towerPositions = _loadTowerSpots(map);
-    for (var pos in towerPositions) {
+    final towerPositions = _loadTowerSpots();
+    for (final pos in towerPositions) {
       final tower = BasicTower(position: pos);
       add(tower);
       towers.add(tower);
     }
   }
 
-  List<Vector2> _loadTowerSpots(TiledComponent map) {
-    final spotsLayer = map.tileMap.getLayer<ObjectGroup>('tower_spots');
+  List<Vector2> _loadTowerSpots() {
+    final spotsLayer = map?.tileMap.getLayer<ObjectGroup>('tower_spots');
     final spotsPoints = <Vector2>[];
-    for (final obj in spotsLayer!.objects) {
+    for (final obj in spotsLayer?.objects ?? []) {
       spotsPoints.add(Vector2(obj.x, obj.y));
     }
     return spotsPoints;
@@ -130,9 +140,7 @@ class TowerDefenseGame extends FlameGame
     npcs.clear();
     towers.clear();
     baseHealth = 100.0;
-    _spawnBasicNPC();
-    _spawnFastNPC();
-    _spawnTankNPC();
+    _spawnAllNPCs();
     _addInitialTowers();
     resumeEngine();
     print('Game restarted!');
@@ -152,8 +160,7 @@ class TowerDefenseGame extends FlameGame
     print('1. Double Shot');
     print('2. Explosive Rounds');
     print('3. Freeze Effect');
-    // Simulate choice (this could be linked to UI interaction)
-    int choice = 1; // Example choice, change as needed
+    int choice = 1;
     tower.applyTier4Choice(choice);
     print('Tier 4 upgrade applied!');
   }

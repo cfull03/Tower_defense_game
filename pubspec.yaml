@@ -1,65 +1,30 @@
 name: tower_defense_game
 description: "A tower defense game built with Flutter and Flame."
-publish_to: 'none' # Prevent accidental publishing to pub.dev
+publish_to: 'none'
 
-# Version and build number for the game
 version: 1.0.0+1
 
-# Flutter SDK version constraints
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-# Project dependencies
 dependencies:
   flutter:
     sdk: flutter
-
-  # Flame game engine for game development
   flame: ^1.14.0
-
-  # Load and render Tiled maps
-  flame_tiled: ^1.16.0
-
-  # Forge2D for physics and collision detection
-  flame_forge2d: ^0.12.0
-
-  # Audio package to add sound effects and background music
-  audioplayers: ^5.2.1
-
-  # Path provider to save and load game data
+  flame_tiled: ^2.0.3
+  flame_forge2d: ^0.18.3
+  audioplayers: ^6.4.0
   path_provider: ^2.1.2
-
-  # Cupertino icons for iOS
   cupertino_icons: ^1.0.8
 
-# Dev dependencies for testing and linting
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^5.0.0
 
-  # Recommended lints for Flutter apps
-  flutter_lints: ^2.0.3
-
-# Flutter-specific settings
 flutter:
-  # Enable material icons
   uses-material-design: true
 
-  # Define game assets (images, maps, audio, fonts)
   assets:
-    - assets/images/
     - assets/maps/level1.tmx
-    - assets/audio/
-
-  # Define custom fonts (if needed)
-  fonts:
-    - family: Schyler
-      fonts:
-        - asset: assets/fonts/Schyler-Regular.ttf
-        - asset: assets/fonts/Schyler-Italic.ttf
-          style: italic
-    - family: Trajan Pro
-      fonts:
-        - asset: assets/fonts/TrajanPro.ttf
-        - asset: assets/fonts/TrajanPro_Bold.ttf
-          weight: 700
+    - assets/images/placeholder.png

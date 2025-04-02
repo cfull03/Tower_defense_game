@@ -1,6 +1,6 @@
 import 'package:flame/components.dart';
 
-abstract class NPCBase extends PositionComponent {
+abstract class NPCBase extends PositionComponent with HasGameRef {
   double health;
   double speed;
   double baseDamage;

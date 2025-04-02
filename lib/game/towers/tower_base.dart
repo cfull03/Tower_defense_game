@@ -9,16 +9,14 @@ abstract class TowerBase extends SpriteComponent with HasGameRef {
   int upgradeLevel = 0;
 
   TowerBase({
-    required Vector2 position,
+    required Vector2 super.position,
     this.attackRange = 150.0,
     this.attackSpeed = 1.0,
     this.damage = 20.0,
-    Sprite? sprite,
+    super.sprite,
   }) : super(
-          position: position,
           size: Vector2.all(32.0),
           anchor: Anchor.center,
-          sprite: sprite,
         );
 
   @override

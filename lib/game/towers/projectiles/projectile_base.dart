@@ -7,16 +7,14 @@ abstract class ProjectileBase extends SpriteComponent with HasGameRef {
   double damage;
 
   ProjectileBase({
-    required Vector2 position,
+    required Vector2 super.position,
     required this.target,
     this.speed = 200.0,
     this.damage = 20.0,
-    Sprite? sprite,
+    super.sprite,
   }) : super(
-          position: position,
           size: Vector2.all(8.0),
           anchor: Anchor.center,
-          sprite: sprite,
         );
 
   @override
