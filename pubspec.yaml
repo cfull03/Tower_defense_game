@@ -27,4 +27,6 @@ flutter:
 
   assets:
     - assets/maps/level1.tmx
+    - assets/images/tropical_tiles.png
     - assets/images/placeholder.png
+

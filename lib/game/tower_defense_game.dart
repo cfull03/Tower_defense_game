@@ -1,4 +1,3 @@
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 import 'npcs/basic_npc.dart';
