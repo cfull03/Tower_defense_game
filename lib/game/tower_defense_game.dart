@@ -25,7 +25,7 @@ class TowerDefenseGame extends FlameGame
     camera.viewport = FixedResolutionViewport(resolution: Vector2(800, 600));
     camera.moveTo(Vector2.zero());
 
-    final sprite = await loadSprite('images/towers/Cannon.png', srcSize: Vector2(32, 32));
+    final sprite = await loadSprite('towers/Cannon.png', srcSize: Vector2(32, 32));
     ghostTower = SpriteComponent(
       sprite: sprite,
       size: Vector2.all(32),
