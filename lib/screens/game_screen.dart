@@ -5,6 +5,8 @@ import '../game/tower_defense_game.dart';
 class GameScreen extends StatelessWidget {
   final TowerDefenseGame _game = TowerDefenseGame();
 
+  GameScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
