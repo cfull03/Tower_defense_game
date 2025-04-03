@@ -2,19 +2,17 @@ import 'package:flutter/material.dart';
 import 'screens/main_menu.dart';
 
 void main() {
-  runApp(const TowerDefenseApp());
+  runApp(const MyApp());
 }
 
-class TowerDefenseApp extends StatelessWidget {
-  const TowerDefenseApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tower Defense Game',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: 'Tower Defense',
+      theme: ThemeData.dark(),
       home: const MainMenu(),
     );
   }
