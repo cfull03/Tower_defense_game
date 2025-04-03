@@ -18,7 +18,7 @@ class TowerDefenseGame extends FlameGame with HasCollisionDetection {
   Future<void> onLoad() async {
     await _loadMap();
     if (map?.tileMap.getLayer<ObjectGroup>('path') == null) {
-      print('❌ Path layer missing in TMX file');
+      print('❌ Path layer missing in JSON map file');
       return;
     }
     enemyPath = _loadEnemyPath();
@@ -29,7 +29,7 @@ class TowerDefenseGame extends FlameGame with HasCollisionDetection {
 
   Future<void> _loadMap() async {
     try {
-      final loadedMap = await TiledComponent.load('maps/level1.tmx', Vector2.all(32));
+      final loadedMap = await TiledComponent.load('maps/level1.json', Vector2.all(32));
       map = loadedMap;
       add(map!);
       print('✅ Map loaded successfully');
@@ -78,6 +78,7 @@ class TowerDefenseGame extends FlameGame with HasCollisionDetection {
       path: enemyPath,
       position: enemyPath.first,
       baseDamage: 10.0,
+      health: 100.0,
     );
     add(npc);
     npcs.add(npc);
@@ -88,6 +89,7 @@ class TowerDefenseGame extends FlameGame with HasCollisionDetection {
       path: enemyPath,
       position: enemyPath.first,
       baseDamage: 5.0,
+      health: 75.0,
     );
     add(npc);
     npcs.add(npc);
