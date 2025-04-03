@@ -1,14 +1,7 @@
-// level1_map.dart
-
 import 'package:flame/components.dart';
+import 'map_utils.dart';
 
 class Level1Map {
-  static const int grass = 0;
-  static const int dirt = 1;
-  static const int flower = 2;
-  static const int pathTile = 3;
-  static const int river = 4;
-
   final int width = 100;
   final int height = 60;
   final int tileSize = 32;
@@ -18,40 +11,32 @@ class Level1Map {
   late List<Vector2> towerSpots;
 
   Level1Map() {
-    tiles = List.generate(height, (_) => List.filled(width, grass));
-    _generatePath();
-    _generateRiver();
-    _placeFlowers();
-    _placeTowerSpots();
-  }
+    tiles = List.generate(height, (_) => List.filled(width, MapUtils.grass));
+    MapUtils.fill(tiles, MapUtils.grass);
+    path = MapUtils.straightPath(tiles, 30, tileSize);
+    MapUtils.drawRiver(tiles, 10, MapUtils.river);
 
-  void _generatePath() {
-    path = [];
-    int row = 30;
-    for (int col = 0; col < width; col++) {
-      tiles[row][col] = pathTile;
-      path.add(Vector2(col * tileSize.toDouble(), row * tileSize.toDouble()));
-    }
-  }
+    MapUtils.scatterFlowers(
+      tiles,
+      [
+        Vector2(5, 28),
+        Vector2(7, 32),
+        Vector2(15, 28),
+        Vector2(17, 32),
+        Vector2(22, 28),
+        Vector2(25, 32),
+      ],
+      tileSize,
+      MapUtils.flower,
+    );
 
-  void _generateRiver() {
-    for (int col = 0; col < width; col++) {
-      tiles[10][col] = river;
-    }
-  }
-
-  void _placeFlowers() {
-    for (int i = 0; i < 50; i += 5) {
-      tiles[28][i] = flower;
-      tiles[32][i + 2] = flower;
-    }
-  }
-
-  void _placeTowerSpots() {
-    towerSpots = [];
-    for (int i = 10; i < 90; i += 20) {
-      towerSpots.add(Vector2(i * tileSize.toDouble(), 28 * tileSize.toDouble()));
-      towerSpots.add(Vector2(i * tileSize.toDouble(), 32 * tileSize.toDouble()));
-    }
+    towerSpots = MapUtils.generateTowerSpots([
+      Vector2(10, 28),
+      Vector2(15, 32),
+      Vector2(20, 28),
+      Vector2(25, 32),
+      Vector2(30, 28),
+      Vector2(35, 32),
+    ], tileSize);
   }
 }
